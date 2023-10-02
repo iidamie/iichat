@@ -26,6 +26,6 @@
  
        - name: Release for Windows
          if: matrix.os == 'windows-latest'
-         run: yarn release
+         run: yarn && yarn build
          env:
            GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
