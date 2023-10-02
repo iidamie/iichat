@@ -1,0 +1,24 @@
+ ......
+ jobs:
+   release:
+     name: build and release Electron app
+     runs-on: ${{ matrix.os }}
+ 
+     strategy:
+       fail-fast: false
+       matrix:
+         os: [windows-latest]
+ 
+     steps:
+       - name: Check out git repository
+         uses: actions/checkout@v3.0.0
+ 
+       - name: Install Node.js
+         uses: actions/setup-node@v3.0.0
+         with: node-version: '14'
+ 
+       - name: Release for Windows
+         if: matrix.os == 'windows-latest'
+         run: yarn release
+         env:
+           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
