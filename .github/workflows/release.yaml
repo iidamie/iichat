@@ -1,60 +1,46 @@
-# build.yml
-
-# Workflow's name
-
-name: Auto Build
-
-# Workflow's trigger
+name: Build Electron App
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - release
+      - main   # 将 'main' 修改为你的主分支名称
 
-
-# Workflow's jobs
 jobs:
-  # job's id
-  release:
-    # job's name
-    name: build and release electron app
-    
-    # the type of machine to run the job on
-    runs-on: ${{ matrix.os }}
+  build:
+    runs-on: ubuntu-latest
 
-    # create a build matrix for jobs
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-
-    # create steps
     steps:
-      # step1: check out repository
-      - name: Check out git repository
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      # step2: install node env
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: '14'   # 指定 Node.js 版本，你可以根据需要修改
 
-      - name: Install system deps
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils
-          
-      # step3: yarn
-      - name: Yarn install
-        run: |
-          yarn
+      - name: Install dependencies
+        run: yarn
 
-      - name: Build  & release app
+      - name: Build Electron app
+        run: yarn build
 
-        run: |
-          yarn build
-
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./path/to/your/app.zip
+          asset_name: app.zip
+          asset_content_type: application/zip
